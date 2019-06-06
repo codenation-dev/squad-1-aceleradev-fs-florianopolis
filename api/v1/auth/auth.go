@@ -8,7 +8,7 @@ import (
 func ApplyRoutes(r *gin.RouterGroup) {
 	auth := r.Group("/auth")
 	{
-		auth.POST("", create)
+		auth.POST("", login)
 		auth.GET("", list)
 		auth.GET("/:id", read)
 		auth.DELETE("/:id", remove)

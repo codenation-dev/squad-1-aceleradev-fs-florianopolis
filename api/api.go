@@ -1,7 +1,7 @@
 package api
 
 import (
-	apiv1 "aceleradev/backend/api/v1"
+	apiv1 "gitlab.com/codenation-squad-1/backend/api/v1"
 
 	"github.com/gin-gonic/gin"
 )

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"aceleradev/backend/api"
+	"gitlab.com/codenation-squad-1/backend/api"
 
 	"github.com/gin-gonic/gin"
 )
