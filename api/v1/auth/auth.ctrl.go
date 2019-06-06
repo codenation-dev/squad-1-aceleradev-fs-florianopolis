@@ -1,6 +1,9 @@
 package auth
 
 import (
+	"context"
+	"gitlab.com/codenation-squad-1/backend/database"
+	"log"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -28,6 +31,7 @@ func login(c *gin.Context) {
 	user := body.Username
 	password := body.Password
 
+	//TODO: Obter usuário da base
 	if user != "test" && password != "test" {
 		c.AbortWithStatus(401)
 	}
@@ -45,6 +49,25 @@ func login(c *gin.Context) {
 	c.JSON(200, map[string]interface{}{
 		"user":  user,
 		"token": tokenString,
+	})
+}
+
+func create(c *gin.Context) {
+	var collection = database.Client.Database("projeto-final").Collection("usuarios")
+	var body RequestBody
+
+	if err := c.BindJSON(&body); err != nil {
+		c.AbortWithStatus(400)
+		return
+	}
+
+	//TODO: Hashear senha
+	_, err := collection.InsertOne(context.TODO(), body)
+	if err != nil {
+		log.Fatal(err)
+	}
+	c.JSON(200, map[string]interface{}{
+		"message": "Usuário " + body.Username + " adicionado com sucesso!",
 	})
 }
 
