@@ -1,6 +1,8 @@
 package main
 
 import (
+	"aceleradev/backend/api"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -10,5 +12,6 @@ const PORT = "8080"
 func main() {
 
 	app := gin.Default()
-	app.Run(":" + PORT) // listen to given port
+	api.ApplyRoutes(app) // apply api router
+	app.Run(":" + PORT)  // listen to given port
 }
