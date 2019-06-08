@@ -2,6 +2,8 @@ package auth
 
 import (
 	"context"
+	"crypto/sha256"
+	"fmt"
 	"gitlab.com/codenation-squad-1/backend/database"
 	"go.mongodb.org/mongo-driver/bson"
 	"log"
@@ -30,7 +32,7 @@ func login(c *gin.Context) {
 		return
 	}
 	username := body.Username
-	password := body.Password
+	password := fmt.Sprintf("%x", sha256.Sum256([]byte(body.Password)))
 
 	user := getUserFromDatabase(username)
 	if user.Password != password {
@@ -63,7 +65,7 @@ func create(c *gin.Context) {
 		return
 	}
 
-	//TODO: Hashear senha
+	body.Password = fmt.Sprintf("%x", sha256.Sum256([]byte(body.Password)))
 	_, err := collection.InsertOne(context.TODO(), body)
 	if err != nil {
 		log.Fatal(err)
