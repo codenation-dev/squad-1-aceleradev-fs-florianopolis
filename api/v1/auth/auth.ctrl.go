@@ -3,10 +3,11 @@ package auth
 import (
 	"context"
 	"gitlab.com/codenation-squad-1/backend/database"
+	"go.mongodb.org/mongo-driver/bson"
 	"log"
 	"time"
 
-	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 )
 
@@ -24,25 +25,22 @@ const userCollection = "usuarios"
 
 func login(c *gin.Context) {
 	var body RequestBody
-
 	if err := c.BindJSON(&body); err != nil {
 		c.AbortWithStatus(400)
 		return
 	}
-
-	var collection = database.GetCollection(userCollection)
-
-	user := body.Username
+	username := body.Username
 	password := body.Password
 
-	//TODO: Obter usuário da base
-	if user != "test" && password != "test" {
+	user := getUserFromDatabase(username)
+	if user.Password != password {
 		c.AbortWithStatus(401)
+		return
 	}
 
 	expTime := time.Now().Add(60 * time.Minute)
 	claims := &Claims{
-		Username: user,
+		Username: username,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expTime.Unix(),
 		},
@@ -51,7 +49,7 @@ func login(c *gin.Context) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, _ := token.SignedString([]byte("codenation-squad1"))
 	c.JSON(200, map[string]interface{}{
-		"user":  user,
+		"user":  username,
 		"token": tokenString,
 	})
 }
@@ -89,4 +87,15 @@ func remove(c *gin.Context) {
 
 func update(c *gin.Context) {
 	c.Status(200)
+}
+
+func getUserFromDatabase(username string) RequestBody {
+	collection := database.GetCollection(userCollection)
+	var res = RequestBody{}
+	filter := bson.M{"username": username}
+	err := collection.FindOne(database.Context, filter).Decode(&res)
+	if err != nil {
+		log.Println(err)
+	}
+	return res
 }
