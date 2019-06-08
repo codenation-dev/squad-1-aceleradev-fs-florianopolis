@@ -6,6 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
+	"os"
 )
 
 var Context context.Context
@@ -15,8 +16,8 @@ var dbName = "projeto-final"
 
 func Initialize() error {
 	Context = context.TODO()
-	//TODO: Alterar para obter URL a partir de variável de ambiente
-	Client, err = mongo.Connect(Context, options.Client().ApplyURI("mongodb+srv://squad1:$quad1floripa@codenationsquad1-agrei.mongodb.net/test?retryWrites=true&w=majority"))
+	url := os.Getenv("URL_MONGO")
+	Client, err = mongo.Connect(Context, options.Client().ApplyURI(url))
 	if err != nil {
 		log.Fatal(err)
 	}
