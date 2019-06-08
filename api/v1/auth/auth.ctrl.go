@@ -20,6 +20,8 @@ type Claims struct {
 	jwt.StandardClaims
 }
 
+const userCollection = "usuarios"
+
 func login(c *gin.Context) {
 	var body RequestBody
 
@@ -27,6 +29,8 @@ func login(c *gin.Context) {
 		c.AbortWithStatus(400)
 		return
 	}
+
+	var collection = database.GetCollection(userCollection)
 
 	user := body.Username
 	password := body.Password
@@ -53,7 +57,7 @@ func login(c *gin.Context) {
 }
 
 func create(c *gin.Context) {
-	var collection = database.Client.Database("projeto-final").Collection("usuarios")
+	var collection = database.GetCollection(userCollection)
 	var body RequestBody
 
 	if err := c.BindJSON(&body); err != nil {

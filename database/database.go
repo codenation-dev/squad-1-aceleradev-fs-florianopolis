@@ -9,17 +9,23 @@ import (
 	"time"
 )
 
-var ctx context.Context
+var Context context.Context
 var Client *mongo.Client
 var err error
+var dbName = "projeto-final"
 
 func Initialize() error {
-	ctx, _ = context.WithTimeout(context.Background(), 10*time.Second)
-	//TODO: Alterar para base compartilhada do squad
-	Client, err = mongo.Connect(ctx, options.Client().ApplyURI("mongodb+srv://squad1:$quad1floripa@codenationsquad1-agrei.mongodb.net/test?retryWrites=true&w=majority"))
+	Context, _ = context.WithTimeout(context.Background(), 10*time.Second)
+	//TODO: Alterar para obter URL a partir de variável de ambiente
+	Client, err = mongo.Connect(Context, options.Client().ApplyURI("mongodb+srv://squad1:$quad1floripa@codenationsquad1-agrei.mongodb.net/test?retryWrites=true&w=majority"))
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println("Connected to MongoDB!")
 	return err
+}
+
+func GetCollection(name string) *mongo.Collection {
+	collection := Client.Database(dbName).Collection(name)
+	return collection
 }
