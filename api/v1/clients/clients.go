@@ -9,5 +9,6 @@ func ApplyRoutes(r *gin.RouterGroup) {
 	clients := r.Group("/clients")
 	{
 		clients.POST("", addCSVToDatabase)
+		clients.GET("/number/:number/page/:page", getClients)
 	}
 }
